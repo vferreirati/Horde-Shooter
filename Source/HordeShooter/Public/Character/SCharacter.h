@@ -32,6 +32,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Overwritten so the line trace (Used by the Weapon)
+	// Comes from the camera instead Character's Eye View Point.
+	virtual FVector GetPawnViewLocation() const override;
+
 	// Movement input functions
 	void MoveForward(float Value);
 	void MoveRight(float Value);

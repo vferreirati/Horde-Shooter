@@ -88,3 +88,12 @@ void ASCharacter::BeginJump() {
 void ASCharacter::EndJump() {
 	StopJumping();
 }
+
+FVector ASCharacter::GetPawnViewLocation() const {
+	
+	if (CameraComp) {
+		return CameraComp->GetComponentLocation();
+	}
+
+	return Super::GetPawnViewLocation();
+}

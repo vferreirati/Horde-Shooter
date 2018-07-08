@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 
 
 // Sets default values
@@ -18,6 +19,7 @@ ASWeapon::ASWeapon()
 
 	// Default weapon range -> 100 meters
 	WeaponRange = 10000.f;
+	MuzzleSocketName = "MuzzleSocket";
 }
 
 // Called when the game starts or when spawned
@@ -38,8 +40,8 @@ void ASWeapon::Fire() {
 
 	AActor* Owner = GetOwner();
 	if (Owner) {
-		FVector EyesLocation;	// Used as StartLocation
-		FRotator EyesRotation;	// Garbage, not used by this function.
+		FVector EyesLocation;
+		FRotator EyesRotation;
 		Owner->GetActorEyesViewPoint(EyesLocation, EyesRotation);
 
 		FHitResult OutHit;
@@ -77,8 +79,16 @@ void ASWeapon::Fire() {
 				this,
 				DamageType
 			);
+
+			if (ImpactEffect) {
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, OutHit.ImpactPoint, OutHit.ImpactNormal.Rotation());
+			}
 		}
 
 		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 1.f, 0, 1.f);
+
+		if (MuzzleEffect) {
+			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
+		}
 	}
 }

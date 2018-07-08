@@ -4,6 +4,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -43,7 +44,8 @@ void ASWeapon::Fire() {
 
 		FHitResult OutHit;
 		FVector StartLocation = EyesLocation;
-		FVector EndLocation = EyesLocation + (EyesRotation.Vector() * WeaponRange);
+		FVector ShotDirection = EyesRotation.Vector();
+		FVector EndLocation = EyesLocation + (ShotDirection * WeaponRange);
 		
 		FCollisionQueryParams CollisionParams;
 		CollisionParams.AddIgnoredActor(Owner);
@@ -61,7 +63,20 @@ void ASWeapon::Fire() {
 
 		// Blocking hit!
 		if (bSuccess) {
-			// TODO: Apply damage to hit Actor
+			
+			// Get Hit Actor from HitResult
+			AActor* HitActor = OutHit.GetActor();
+
+			// Apply damage to Hit Actor
+			UGameplayStatics::ApplyPointDamage(
+				HitActor,
+				20,
+				ShotDirection,
+				OutHit,
+				Owner->GetInstigatorController(),
+				this,
+				DamageType
+			);
 		}
 
 		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 1.f, 0, 1.f);

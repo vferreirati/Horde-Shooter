@@ -26,6 +26,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	float WeaponRange;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	TSubclassOf<class UDamageType> DamageType;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

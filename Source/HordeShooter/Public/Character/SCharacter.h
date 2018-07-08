@@ -39,4 +39,8 @@ protected:
 	// Crouch input functions
 	void BeginCrouch();
 	void EndCrouch();
+
+	// Jump input functions
+	void BeginJump();
+	void EndJump();
 };

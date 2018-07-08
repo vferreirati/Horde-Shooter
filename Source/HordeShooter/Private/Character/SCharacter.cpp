@@ -18,6 +18,7 @@ ASCharacter::ASCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +47,10 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	// Bind look inputs
 	PlayerInputComponent->BindAxis("LookUp", this, &ASCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("Turn", this, &ASCharacter::AddControllerYawInput);
+
+	// Bind crouch inputs
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
 }
 
 void ASCharacter::MoveForward(float Value) {
@@ -60,3 +65,10 @@ void ASCharacter::MoveRight(float Value) {
 	}
 }
 
+void ASCharacter::BeginCrouch() {
+	Crouch();
+}
+
+void ASCharacter::EndCrouch() {
+	UnCrouch();
+}

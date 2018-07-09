@@ -11,29 +11,12 @@
 // Sets default values
 ASWeapon::ASWeapon()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	RootComponent = MeshComp;
 
 	// Default weapon range -> 100 meters
 	WeaponRange = 10000.f;
 	MuzzleSocketName = "MuzzleSocket";
-}
-
-// Called when the game starts or when spawned
-void ASWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ASWeapon::Fire() {
@@ -54,7 +37,6 @@ void ASWeapon::Fire() {
 		CollisionParams.AddIgnoredActor(this);
 		CollisionParams.bTraceComplex = true;
 
-		// Trace the World pawn eyes to crosshair location
 		bool bSuccess = GetWorld()->LineTraceSingleByChannel(
 			OutHit,
 			StartLocation,
@@ -65,30 +47,21 @@ void ASWeapon::Fire() {
 
 		// Blocking hit!
 		if (bSuccess) {
-			
-			// Get Hit Actor from HitResult
+			// TODO: Move damage logic to another function
 			AActor* HitActor = OutHit.GetActor();
-
-			// Apply damage to Hit Actor
-			UGameplayStatics::ApplyPointDamage(
-				HitActor,
-				20,
-				ShotDirection,
-				OutHit,
-				Owner->GetInstigatorController(),
-				this,
-				DamageType
-			);
+			UGameplayStatics::ApplyPointDamage(HitActor, 20, ShotDirection, OutHit,	Owner->GetInstigatorController(), this, DamageType);
 
 			if (ImpactEffect) {
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, OutHit.ImpactPoint, OutHit.ImpactNormal.Rotation());
 			}
 		}
 
-		DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 1.f, 0, 1.f);
+		PlayFireEffects();
+	}
+}
 
-		if (MuzzleEffect) {
-			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
-		}
+void ASWeapon::PlayFireEffects() {
+	if (MuzzleEffect) {
+		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
 	}
 }

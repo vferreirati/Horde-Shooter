@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "SWeapon.h"
 
 
 // Sets default values
@@ -26,6 +27,7 @@ ASCharacter::ASCharacter()
 
 	ZoomedFOV = 60;
 	ZoomInterpSpeed = 20.f;
+	WeaponSocket = "WeaponSocket";
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +36,7 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	DefaultFOV = CameraComp->FieldOfView;
+	SpawnDefaultWeapon();
 }
 
 // Called every frame
@@ -67,8 +70,12 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::BeginJump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ASCharacter::EndJump);
 
+	// Bind zoom inputs
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
+
+	// Bind fire inputs
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::Fire);
 }
 
 void ASCharacter::MoveForward(float Value) {
@@ -114,4 +121,28 @@ void ASCharacter::BeginZoom() {
 
 void ASCharacter::EndZoom() {
 	bWantsToZoom = false;
+}
+
+void ASCharacter::Fire() {
+	if (CurrentWeapon) {
+		CurrentWeapon->Fire();
+	}
+}
+
+void ASCharacter::SpawnDefaultWeapon() {
+	if (!DefaultWeapon) {
+		UE_LOG(LogTemp, Error, TEXT("SCHARACTER DOESN'T HAVE A DEFAULT WEAPON CLASS"))
+		return;
+	}
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	CurrentWeapon = GetWorld()->SpawnActor<ASWeapon>(DefaultWeapon, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	if (CurrentWeapon) {
+		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn character default weapon"))
+	}
 }

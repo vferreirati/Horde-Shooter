@@ -15,8 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	ASWeapon();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	virtual void Fire();
 
 protected:
 	
@@ -42,9 +42,7 @@ protected:
 	class UParticleSystem* ImpactEffect;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void Fire();
+	// Plays the fire effect at the weapon muzzle
+	void PlayFireEffects();
 };

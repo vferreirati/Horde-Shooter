@@ -40,6 +40,17 @@ protected:
 
 	bool bWantsToZoom;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	class ASWeapon* CurrentWeapon;
+
+	// Default weapon of the character. Spawned on BeginPlay.
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<class ASWeapon> DefaultWeapon;
+
+	// Name of the socket the weapon will be attached to.
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	FName WeaponSocket;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -60,6 +71,12 @@ protected:
 	void BeginJump();
 	void EndJump();
 
+	// Zoom input functions
 	void BeginZoom();
 	void EndZoom();
+
+	// Weapon fire input function
+	void Fire();
+
+	void SpawnDefaultWeapon();
 };

@@ -28,6 +28,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class USpringArmComponent* SpringArmComp;
 
+	// Default FOV get by the camera component on BeginPlay()
+	float DefaultFOV;
+
+	// FOV Value when player zooms the camera.
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gameplay")
+	float ZoomedFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay", meta = (ClampMin = 0.1, ClampMax = 100))
+	float ZoomInterpSpeed;
+
+	bool bWantsToZoom;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,4 +59,7 @@ protected:
 	// Jump input functions
 	void BeginJump();
 	void EndJump();
+
+	void BeginZoom();
+	void EndZoom();
 };

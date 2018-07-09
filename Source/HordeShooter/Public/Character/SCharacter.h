@@ -76,7 +76,10 @@ protected:
 	void EndZoom();
 
 	// Weapon fire input function
-	void Fire();
+	void StartFire();
+	void StopFire();
 
+	// Spawns the default weapon of the character.
+	// See DefaultWeapon.
 	void SpawnDefaultWeapon();
 };

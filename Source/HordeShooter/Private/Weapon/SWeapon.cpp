@@ -9,6 +9,7 @@
 #include "Camera/CameraShake.h"
 #include "HordeShooter.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "TimerManager.h"
 
 
 // Sets default values
@@ -22,6 +23,23 @@ ASWeapon::ASWeapon()
 	MuzzleSocketName = "MuzzleSocket";
 	BaseDamage = 15;
 	CriticalMultiplier = 2;
+	RateOfFire = 600;
+}
+
+void ASWeapon::BeginPlay() {
+	Super::BeginPlay();
+
+	FireDelay = 60 / RateOfFire;
+}
+
+void ASWeapon::StartFire() {
+	float FirstShotDelay = LastFiredTime + FireDelay - GetWorld()->TimeSeconds;
+	FirstShotDelay = FMath::Clamp(FirstShotDelay, 0.f, FireDelay);
+	GetWorldTimerManager().SetTimer(TimerHandle_WeaponFire, this, &ASWeapon::Fire, FireDelay, true, FirstShotDelay);
+}
+
+void ASWeapon::StopFire() {
+	GetWorldTimerManager().ClearTimer(TimerHandle_WeaponFire);
 }
 
 void ASWeapon::Fire() {
@@ -80,6 +98,7 @@ void ASWeapon::Fire() {
 		}
 
 		PlayFireEffects();
+		LastFiredTime = GetWorld()->TimeSeconds;
 	}
 }
 

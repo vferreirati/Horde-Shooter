@@ -15,8 +15,13 @@ public:
 	// Sets default values for this actor's properties
 	ASWeapon();
 
+	virtual void BeginPlay() override;
+
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void Fire();
+	virtual void StartFire();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	virtual void StopFire();
 
 protected:
 	
@@ -56,8 +61,24 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<class UCameraShake> CameraShake;
 
+	FTimerHandle TimerHandle_WeaponFire;
+
+	// Holds the last time this weapon was shot
+	float LastFiredTime;
+
+	// Fire rate of the weapon. Should be used as Bullets Per Minute.
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float RateOfFire;
+
+	// Helper variable to determine the amount of time between shots.
+	// 60 - ROF = FireDelay
+	float FireDelay;
+
 protected:
 
 	// Plays the fire effect at the weapon muzzle
 	void PlayFireEffects();
+	
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	virtual void Fire();
 };

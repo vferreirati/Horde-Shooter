@@ -29,17 +29,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<class UDamageType> DamageType;
 
-	// Name of the socket that MuzzleEffect will be attached to.
+	// Name of the socket that MuzzleEffect will be attached to
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FName MuzzleSocketName;
 
-	// Visual Effect that will be spawned at the barrel of the Gun.
+	// Visual Effect that will be spawned at the barrel of the Gun
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	class UParticleSystem* MuzzleEffect;
 
-	// Visual Effect that will be spawned at hit location of the bullet.
+	// Visual Effect that will be spawned at hit location of the bullet
+	// If the Surface hit is Default
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	class UParticleSystem* ImpactEffect;
+	class UParticleSystem* DefaultImpactEffect;
+
+	// Visual Effect that will be spawned at hit location of the bullet
+	// If the Surface hit is Vulnerable
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	class UParticleSystem* VulnerableImpactEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<class UCameraShake> CameraShake;

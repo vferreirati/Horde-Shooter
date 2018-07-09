@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Camera/CameraShake.h"
+#include "HordeShooter.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 
 // Sets default values
@@ -37,6 +39,7 @@ void ASWeapon::Fire() {
 		CollisionParams.AddIgnoredActor(Owner);
 		CollisionParams.AddIgnoredActor(this);
 		CollisionParams.bTraceComplex = true;
+		CollisionParams.bReturnPhysicalMaterial = true;
 
 		bool bSuccess = GetWorld()->LineTraceSingleByChannel(
 			OutHit,
@@ -52,8 +55,21 @@ void ASWeapon::Fire() {
 			AActor* HitActor = OutHit.GetActor();
 			UGameplayStatics::ApplyPointDamage(HitActor, 20, ShotDirection, OutHit,	Owner->GetInstigatorController(), this, DamageType);
 
-			if (ImpactEffect) {
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, OutHit.ImpactPoint, OutHit.ImpactNormal.Rotation());
+			UParticleSystem* SelectedEffect = nullptr;
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHit.PhysMaterial.Get());
+			
+			switch (SurfaceType) {
+			case SURFACE_FLESHDEFAULT:
+			case SURFACE_FLESHVULNERABLE:
+				SelectedEffect = VulnerableImpactEffect;
+				break;
+			default:
+				SelectedEffect = DefaultImpactEffect;
+				break;
+			}
+
+			if (SelectedEffect) {
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, OutHit.ImpactPoint, OutHit.ImpactNormal.Rotation());
 			}
 		}
 

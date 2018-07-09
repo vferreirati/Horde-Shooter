@@ -20,6 +20,8 @@ ASWeapon::ASWeapon()
 	// Default weapon range -> 100 meters
 	WeaponRange = 10000.f;
 	MuzzleSocketName = "MuzzleSocket";
+	BaseDamage = 15;
+	CriticalMultiplier = 2;
 }
 
 void ASWeapon::Fire() {
@@ -45,18 +47,20 @@ void ASWeapon::Fire() {
 			OutHit,
 			StartLocation,
 			EndLocation,
-			ECC_Visibility,
+			COLLISION_WEAPON,
 			CollisionParams
 		);
 
 		// Blocking hit!
-		if (bSuccess) {
-			// TODO: Move damage logic to another function
-			AActor* HitActor = OutHit.GetActor();
-			UGameplayStatics::ApplyPointDamage(HitActor, 20, ShotDirection, OutHit,	Owner->GetInstigatorController(), this, DamageType);
+		if (bSuccess) {			
 
 			UParticleSystem* SelectedEffect = nullptr;
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHit.PhysMaterial.Get());
+
+			float DamageToApply = BaseDamage;
+			if (SurfaceType == SURFACE_FLESHVULNERABLE) {
+				DamageToApply *= CriticalMultiplier;
+			}
 			
 			switch (SurfaceType) {
 			case SURFACE_FLESHDEFAULT:
@@ -67,6 +71,8 @@ void ASWeapon::Fire() {
 				SelectedEffect = DefaultImpactEffect;
 				break;
 			}
+
+			UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), DamageToApply, ShotDirection, OutHit, Owner->GetInstigatorController(), this, DamageType);
 
 			if (SelectedEffect) {
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, OutHit.ImpactPoint, OutHit.ImpactNormal.Rotation());

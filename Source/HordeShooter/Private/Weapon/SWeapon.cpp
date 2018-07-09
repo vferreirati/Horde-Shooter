@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
+#include "Camera/CameraShake.h"
 
 
 // Sets default values
@@ -64,4 +65,15 @@ void ASWeapon::PlayFireEffects() {
 	if (MuzzleEffect) {
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
 	}
+
+	if (CameraShake) {
+		APawn* Owner = Cast<APawn>(GetOwner());
+		if (Owner) {
+			APlayerController* PC = Cast<APlayerController>(Owner->GetController());
+			if (PC) {
+				PC->ClientPlayCameraShake(CameraShake);
+			}
+		}
+	}
+	
 }

@@ -58,6 +58,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	class UParticleSystem* VulnerableImpactEffect;
 
+	// Sound that will be played on Fire
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	class USoundBase* FireSound;
+
+	// Camera shake class that will be played on Fire
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<class UCameraShake> CameraShake;
 

@@ -117,4 +117,7 @@ void ASWeapon::PlayFireEffects() {
 		}
 	}
 	
+	if (FireSound) {
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, MeshComp->GetSocketLocation(MuzzleSocketName));
+	}
 }

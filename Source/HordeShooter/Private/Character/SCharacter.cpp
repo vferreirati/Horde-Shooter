@@ -6,6 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "SWeapon.h"
+#include "HordeShooter.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -24,6 +26,9 @@ ASCharacter::ASCharacter()
 	// Get the movement component, go to the NavAgent and set that this class can Crouch.
 	// Otherwise BeginCrouch and EndCrouch WON'T WORK!
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	// Set the Capsule Component to IGNORE the Weapon channel so the weapon trace hits the mesh and gets the correct Physical Material
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 
 	ZoomedFOV = 60;
 	ZoomInterpSpeed = 20.f;

@@ -32,7 +32,7 @@ void USHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, cons
 		return;
 	}
 
-	// Update our health clamped.
+	// Update and clamp Health
 	Health = FMath::Clamp(Health - Damage, 0.f, DefaultHealth);
 	
 	OnHealthChanged.Broadcast(this, Health, Damage, DamageType, InstigatedBy, DamageCauser);

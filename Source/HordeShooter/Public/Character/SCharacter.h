@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class USHealthComponent* HealthComp;
+
 	// Default FOV get by the camera component on BeginPlay()
 	float DefaultFOV;
 
@@ -50,6 +53,9 @@ protected:
 	// Name of the socket the weapon will be attached to.
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	FName WeaponSocket;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+	bool bIsDead;
 
 protected:
 	// Called when the game starts or when spawned
@@ -82,4 +88,9 @@ protected:
 	// Spawns the default weapon of the character.
 	// See DefaultWeapon.
 	void SpawnDefaultWeapon();
+
+	// Function called by HealthComponent when broadcasted
+	// Handles the Health change of the Character
+	UFUNCTION()
+	void OnHealthChanged(class USHealthComponent* HealthComponent, float Health, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 };

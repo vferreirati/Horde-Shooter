@@ -8,6 +8,7 @@
 #include "SWeapon.h"
 #include "HordeShooter.h"
 #include "Components/CapsuleComponent.h"
+#include "SHealthComponent.h"
 
 
 // Sets default values
@@ -22,6 +23,9 @@ ASCharacter::ASCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
+	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 
 	// Get the movement component, go to the NavAgent and set that this class can Crouch.
 	// Otherwise BeginCrouch and EndCrouch WON'T WORK!
@@ -41,6 +45,7 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	DefaultFOV = CameraComp->FieldOfView;
+	bIsDead = false;
 	SpawnDefaultWeapon();
 }
 
@@ -156,5 +161,31 @@ void ASCharacter::SpawnDefaultWeapon() {
 
 	} else {
 		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn character default weapon"))
+	}
+}
+
+void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Health, float Damage,
+	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
+
+	if (Health == 0.f && !bIsDead) {
+		// Ded
+		bIsDead = true;
+
+		// Stop movement
+		GetMovementComponent()->StopMovementImmediately();
+
+		// If he's holding a weapon, make sure it stopped firing
+		if (CurrentWeapon) {
+			CurrentWeapon->StopFire();
+		}
+
+		// Disable collision of his CapsuleComp
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		// Detach from controller
+		DetachFromControllerPendingDestroy();
+
+		// Timer to get removed from map
+		SetLifeSpan(5.f);
 	}
 }

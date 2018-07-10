@@ -9,6 +9,7 @@
 #include "HordeShooter.h"
 #include "Components/CapsuleComponent.h"
 #include "SHealthComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values
@@ -46,7 +47,13 @@ void ASCharacter::BeginPlay()
 	
 	DefaultFOV = CameraComp->FieldOfView;
 	bIsDead = false;
-	SpawnDefaultWeapon();
+
+	// If this piece of code is running on the server
+	// Spawn the default weapon
+	// This will cause to only the SERVER have a weapon?
+	if (Role == ROLE_Authority) {
+		SpawnDefaultWeapon();
+	}
 }
 
 // Called every frame
@@ -167,7 +174,11 @@ void ASCharacter::SpawnDefaultWeapon() {
 void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Health, float Damage,
 	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
-	if (Health == 0.f && !bIsDead) {
+	if (bIsDead) {
+		return;
+	}
+
+	if (Health == 0.f) {
 		// Ded
 		bIsDead = true;
 
@@ -188,4 +199,10 @@ void ASCharacter::OnHealthChanged(USHealthComponent* HealthComponent, float Heal
 		// Timer to get removed from map
 		SetLifeSpan(5.f);
 	}
+}
+
+void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASCharacter, CurrentWeapon)
 }

@@ -43,7 +43,7 @@ protected:
 
 	bool bWantsToZoom;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(Replicated)
 	class ASWeapon* CurrentWeapon;
 
 	// Default weapon of the character. Spawned on BeginPlay.

@@ -24,6 +24,8 @@ ASWeapon::ASWeapon()
 	BaseDamage = 15;
 	CriticalMultiplier = 2;
 	RateOfFire = 600;
+
+	SetReplicates(true);
 }
 
 void ASWeapon::BeginPlay() {

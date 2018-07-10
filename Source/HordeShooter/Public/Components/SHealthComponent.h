@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "SHealthComponent.generated.h"
 
+// Event called when health changes
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FOnHealthChangedSignature, USHealthComponent*, HealthComponent, float, Health, float, Damage, const class UDamageType*, DamageType, class AController*, InstigatedBy, AActor*, DamageCauser);
 
 UCLASS( ClassGroup=(COOP), meta=(BlueprintSpawnableComponent) )
 class HORDESHOOTER_API USHealthComponent : public UActorComponent
@@ -15,6 +17,9 @@ class HORDESHOOTER_API USHealthComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	USHealthComponent();
+	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHealthChangedSignature OnHealthChanged;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "HealthComponent")
@@ -22,7 +27,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 	float DefaultHealth;
-
+	
 protected:	
 	// Called when the game starts
 	virtual void BeginPlay() override;

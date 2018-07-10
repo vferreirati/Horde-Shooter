@@ -5,6 +5,7 @@
 #include "SHealthComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASExplosiveBarrel::ASExplosiveBarrel()
@@ -25,6 +26,9 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 	ExplosionImpulse = 1000;
 	ExplosionUpwardsImpulse = 500;
 	bExploded = false;	
+
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 void ASExplosiveBarrel::BeginPlay() {
@@ -37,8 +41,6 @@ void ASExplosiveBarrel::BeginPlay() {
 	RadialForceComp->bImpulseVelChange = true;	// Velocity change should ALWAYS be true.
 }
 
-// USHealthComponent* HealthComponent, float Health, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser
-
 void ASExplosiveBarrel::OnHealthChanged(USHealthComponent* HealthComponent, float Health, float Damage, 
 	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
@@ -47,29 +49,39 @@ void ASExplosiveBarrel::OnHealthChanged(USHealthComponent* HealthComponent, floa
 	}
 
 	if (Health == 0) {
-		// ded
-		bExploded = true;
-
-		// Play Explosion effect
-		if (ExplosionEffect) {
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
-		}
-		
-		// Launch Barrel Upwards
-		MeshComp->AddImpulse(FVector(0.f, 0.f, ExplosionUpwardsImpulse), NAME_None, true);
-
-		// Change MeshComp Material
-		if (ExplodedMaterial) {
-			MeshComp->SetMaterial(0, ExplodedMaterial);
-		}
-
-		// Apply radial force
-		RadialForceComp->FireImpulse();
-
-		// Apply radial damage
-		TArray<AActor*> IgnoredActors;
-		UGameplayStatics::ApplyRadialDamage(GetWorld(), ExplosionDamage, GetActorLocation(), ExplosionRadius, DamageTypeClass, IgnoredActors);
-
-		UE_LOG(LogTemp, Warning, TEXT("The barrel exploded causing %s damage, with a explosion radius of %s and applying a radial force of %s!"), *FString::SanitizeFloat(ExplosionDamage), *FString::SanitizeFloat(ExplosionRadius), *FString::SanitizeFloat(ExplosionImpulse))
+		Explode();
 	}
+}
+
+void ASExplosiveBarrel::Explode() {
+	// ded
+	bExploded = true;
+
+	// Launch Barrel Upwards
+	MeshComp->AddImpulse(FVector(0.f, 0.f, ExplosionUpwardsImpulse), NAME_None, true);
+
+	// Apply radial force
+	RadialForceComp->FireImpulse();
+
+	// Apply radial damage
+	TArray<AActor*> IgnoredActors;
+	UGameplayStatics::ApplyRadialDamage(GetWorld(), ExplosionDamage, GetActorLocation(), ExplosionRadius, DamageTypeClass, IgnoredActors);
+}
+
+void ASExplosiveBarrel::OnRep_Explode() {
+	// Play Explosion effect
+	if (ExplosionEffect) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
+	}
+
+	// Change MeshComp Material
+	if (ExplodedMaterial) {
+		MeshComp->SetMaterial(0, ExplodedMaterial);
+	}
+}
+
+void ASExplosiveBarrel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASExplosiveBarrel, bExploded);
 }

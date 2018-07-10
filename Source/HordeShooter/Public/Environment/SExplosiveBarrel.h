@@ -51,6 +51,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Explosion")
 	float ExplosionUpwardsImpulse;
 
+	UPROPERTY(ReplicatedUsing = OnRep_Explode)
 	bool bExploded;
 
 protected:
@@ -59,6 +60,9 @@ protected:
 	void OnHealthChanged(class USHealthComponent* HealthComponent, float Health, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
 	// Explode this barrel!!!
-	void Explode();
-	
+	void Explode();	
+
+	// Plays the visual effects on clients
+	UFUNCTION()
+	void OnRep_Explode();
 };

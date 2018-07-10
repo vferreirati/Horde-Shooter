@@ -22,12 +22,13 @@ public:
 	FOnHealthChangedSignature OnHealthChanged;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = "HealthComponent")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "HealthComponent")
 	float Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 	float DefaultHealth;
 	
+
 protected:	
 	// Called when the game starts
 	virtual void BeginPlay() override;

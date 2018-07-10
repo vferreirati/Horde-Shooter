@@ -103,7 +103,6 @@ void ASWeapon::Fire() {
 			HitScanTrace.TraceTo = EndLocation;
 			HitScanTrace.SurfaceType = SurfaceType;
 		}
-
 		PlayFireEffects();
 		LastFiredTime = GetWorld()->TimeSeconds;
 	}

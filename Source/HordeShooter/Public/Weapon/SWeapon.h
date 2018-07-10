@@ -6,6 +6,19 @@
 #include "GameFramework/Actor.h"
 #include "SWeapon.generated.h"
 
+// Contains Information of a single hitscan weapon linetrace
+USTRUCT()
+struct FHitScanTrace {
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	TEnumAsByte<EPhysicalSurface> SurfaceType;
+	
+	UPROPERTY()
+	FVector_NetQuantize TraceTo;
+};
+
 UCLASS()
 class HORDESHOOTER_API ASWeapon : public AActor
 {
@@ -79,10 +92,15 @@ protected:
 	// 60 - ROF = FireDelay
 	float FireDelay;
 
+	UPROPERTY(ReplicatedUsing = OnRep_HitScanTrace)
+	FHitScanTrace HitScanTrace;
+
 protected:
 
 	// Plays the fire effect at the weapon muzzle
 	void PlayFireEffects();
+
+	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoint);
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Fire();
@@ -90,4 +108,7 @@ protected:
 	// ASK the server to run the Fire function
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerFire();
+
+	UFUNCTION()
+	void OnRep_HitScanTrace();
 };

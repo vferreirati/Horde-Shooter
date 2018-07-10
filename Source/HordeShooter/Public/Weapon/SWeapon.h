@@ -86,4 +86,8 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Fire();
+
+	// ASK the server to run the Fire function
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
 };

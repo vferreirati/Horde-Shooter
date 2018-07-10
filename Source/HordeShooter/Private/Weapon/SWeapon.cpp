@@ -46,6 +46,12 @@ void ASWeapon::StopFire() {
 
 void ASWeapon::Fire() {
 
+	// If who called this function isn't the server
+	if (Role < ROLE_Authority) {
+		// We ASK the server to run this code
+		ServerFire();
+	}
+
 	AActor* Owner = GetOwner();
 	if (Owner) {
 		FVector EyesLocation;
@@ -102,6 +108,14 @@ void ASWeapon::Fire() {
 		PlayFireEffects();
 		LastFiredTime = GetWorld()->TimeSeconds;
 	}
+}
+
+void ASWeapon::ServerFire_Implementation() {
+	Fire();
+}
+
+bool ASWeapon::ServerFire_Validate() {
+	return true;
 }
 
 void ASWeapon::PlayFireEffects() {

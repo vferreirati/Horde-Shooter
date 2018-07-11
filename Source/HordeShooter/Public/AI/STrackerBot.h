@@ -22,6 +22,9 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	class UStaticMeshComponent* MeshComp;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
+	class USHealthComponent* HealthComp;
+
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float MovementForce;
 	
@@ -38,5 +41,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Gets the next path point to player character
 	FVector GetNextPathPoint();
+
+	// Function subscribed to HealthComp OnHealthChanged
+	UFUNCTION()
+	void OnHealthChanged(class USHealthComponent* HealthComponent, float Health, float Damage, 
+		const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 };

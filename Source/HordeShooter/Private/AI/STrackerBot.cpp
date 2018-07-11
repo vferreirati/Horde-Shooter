@@ -7,6 +7,7 @@
 #include "AI/Navigation/NavigationSystem.h"
 #include "AI/Navigation/NavigationPath.h"
 #include "Gameframework/Character.h"
+#include "SHealthComponent.h"
 
 
 // Sets default values
@@ -19,6 +20,9 @@ ASTrackerBot::ASTrackerBot()
 	MeshComp->SetCanEverAffectNavigation(false);
 	MeshComp->SetSimulatePhysics(true);
 	RootComponent = MeshComp;
+
+	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
+	HealthComp->OnHealthChanged.AddDynamic(this, &ASTrackerBot::OnHealthChanged);
 
 	bUseVelocityChange = false;
 	MovementForce = 1000.f;
@@ -68,4 +72,14 @@ FVector ASTrackerBot::GetNextPathPoint() {
 	}
 
 	return GetActorLocation();
+}
+
+void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Health, float Damage, 
+	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
+
+	// Explode when ded
+
+	// TODO: Pulse the material on hit
+
+	UE_LOG(LogTemp, Warning, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName())
 }

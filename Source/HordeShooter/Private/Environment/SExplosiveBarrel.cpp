@@ -50,6 +50,7 @@ void ASExplosiveBarrel::OnHealthChanged(USHealthComponent* HealthComponent, floa
 
 	if (Health == 0) {
 		Explode();
+		OnRep_Explode();
 	}
 }
 

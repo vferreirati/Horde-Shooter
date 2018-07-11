@@ -24,7 +24,7 @@ ASTrackerBot::ASTrackerBot()
 	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASTrackerBot::OnHealthChanged);
 
-	bUseVelocityChange = false;
+	bUseVelocityChange = true;
 	MovementForce = 1000.f;
 	RequiredDistanceToTarget = 100.f;
 }
@@ -45,7 +45,7 @@ void ASTrackerBot::Tick(float DeltaTime)
 
 	float DistanceToTarget = (GetActorLocation() - NextPathPoint).Size();
 
-	if (DistanceToTarget >= RequiredDistanceToTarget) {
+	if (DistanceToTarget > RequiredDistanceToTarget) {
 		// Keep moving towards next target
 		FVector ForceDirection = NextPathPoint - GetActorLocation();
 		ForceDirection.Normalize();
@@ -53,8 +53,10 @@ void ASTrackerBot::Tick(float DeltaTime)
 		ForceDirection *= MovementForce;
 
 		MeshComp->AddForce(ForceDirection, NAME_None, bUseVelocityChange);
+		UE_LOG(LogTemp, Warning, TEXT("Force added"))
 	} else {
 		NextPathPoint = GetNextPathPoint();
+		UE_LOG(LogTemp, Warning, TEXT("Called next point"))
 	}
 }
 
@@ -80,6 +82,13 @@ void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Hea
 	// Explode when ded
 
 	// TODO: Pulse the material on hit
+	if (!MatInst) {
+		MatInst = MeshComp->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MeshComp->GetMaterial(0));
+	}
+	
+	if (MatInst) {
+		MatInst->SetScalarParameterValue("LastTimeDamageTaken", GetWorld()->TimeSeconds);
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName())
 }

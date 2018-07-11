@@ -37,6 +37,9 @@ protected:
 	// Next point in navigation path
 	FVector NextPathPoint;
 
+	// Dynamic material to pulse on damage
+	UMaterialInstanceDynamic* MatInst;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -18,12 +18,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
 protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	class UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	class USHealthComponent* HealthComp;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
+	class USphereComponent* SphereComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float MovementForce;
@@ -45,11 +50,15 @@ protected:
 
 	bool bExploded;
 
+	bool bTimerHasStarted;
+
 	// Next point in navigation path
 	FVector NextPathPoint;
 
 	// Dynamic material to pulse on damage
 	UMaterialInstanceDynamic* MatInst;
+
+	FTimerHandle TimerHandle_SelfDamage;
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,6 +69,10 @@ protected:
 
 	// Explode the bot dealing radial damage
 	void SelfDestruct();
+
+	UFUNCTION()
+	// Inflicts damage to self.
+	void DamageSelf();
 
 	// Function subscribed to HealthComp OnHealthChanged
 	UFUNCTION()

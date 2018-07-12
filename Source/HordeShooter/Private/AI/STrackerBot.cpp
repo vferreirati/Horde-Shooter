@@ -9,6 +9,9 @@
 #include "Gameframework/Character.h"
 #include "SHealthComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Components/SphereComponent.h"
+#include "SCharacter.h"
+#include "TimerManager.h"
 
 
 // Sets default values
@@ -24,6 +27,15 @@ ASTrackerBot::ASTrackerBot()
 
 	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
 	HealthComp->OnHealthChanged.AddDynamic(this, &ASTrackerBot::OnHealthChanged);
+
+	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	SphereComp->SetSphereRadius(200.f);
+
+	// SphereComp optimization code
+	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	SphereComp->SetupAttachment(MeshComp);
 
 	bUseVelocityChange = true;
 	MovementForce = 1000.f;
@@ -82,6 +94,9 @@ void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Hea
 	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) {
 
 	// Explode when ded
+	if (Health <= 0) {
+		SelfDestruct();
+	}
 
 	if (!MatInst) {
 		MatInst = MeshComp->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MeshComp->GetMaterial(0));
@@ -92,10 +107,6 @@ void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Hea
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName())
-
-	if (Health <= 0) {
-		SelfDestruct();
-	}
 }
 
 void ASTrackerBot::SelfDestruct() {
@@ -117,4 +128,24 @@ void ASTrackerBot::SelfDestruct() {
 	UGameplayStatics::ApplyRadialDamage(this, ExplosionDamage, GetActorLocation(), ExplosionRadius, nullptr, IgnoredActors, this, GetInstigatorController(), true);
 	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Yellow, false, 5.f, 0, 2.f);
 	Destroy();
+}
+
+void ASTrackerBot::NotifyActorBeginOverlap(AActor* OtherActor) {
+	ASCharacter* PlayerPawn = Cast<ASCharacter>(OtherActor);
+
+	if (bTimerHasStarted) {
+		return;
+	}
+	
+	// If we overlapped with a player
+	if (PlayerPawn) {
+
+		// Set timer to inflict damage to self until explosion
+		GetWorldTimerManager().SetTimer(TimerHandle_SelfDamage, this, &ASTrackerBot::DamageSelf, 0.5f, true, 0.f);
+		bTimerHasStarted = true;
+	}
+}
+
+void ASTrackerBot::DamageSelf() {
+	UGameplayStatics::ApplyDamage(this, 20.f, GetInstigatorController(), this, nullptr);
 }

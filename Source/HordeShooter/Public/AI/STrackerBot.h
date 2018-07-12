@@ -39,7 +39,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float RequiredDistanceToTarget;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TracketBot")
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	class UParticleSystem* ExplosionEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
@@ -47,6 +47,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float ExplosionDamage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	class USoundCue* SelfDestructSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	class USoundCue* ExplosionSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	float SelfDamageInterval;
 
 	bool bExploded;
 

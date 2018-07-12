@@ -12,6 +12,7 @@
 #include "Components/SphereComponent.h"
 #include "SCharacter.h"
 #include "TimerManager.h"
+#include "Sound/SoundCue.h"
 
 
 // Sets default values
@@ -43,6 +44,7 @@ ASTrackerBot::ASTrackerBot()
 	bExploded = false;
 	ExplosionRadius = 200.f;
 	ExplosionDamage = 40.f;
+	SelfDamageInterval = 0.25;
 }
 
 // Called when the game starts or when spawned
@@ -121,6 +123,10 @@ void ASTrackerBot::SelfDestruct() {
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
 	}
 
+	if (ExplosionSound) {
+		UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
+	}
+
 	TArray<AActor*> IgnoredActors;
 	IgnoredActors.Add(this);
 
@@ -141,8 +147,13 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor* OtherActor) {
 	if (PlayerPawn) {
 
 		// Set timer to inflict damage to self until explosion
-		GetWorldTimerManager().SetTimer(TimerHandle_SelfDamage, this, &ASTrackerBot::DamageSelf, 0.5f, true, 0.f);
+		GetWorldTimerManager().SetTimer(TimerHandle_SelfDamage, this, &ASTrackerBot::DamageSelf, SelfDamageInterval, true, 0.f);
 		bTimerHasStarted = true;
+
+		// Play the Trackerbot warning
+		if (SelfDestructSound) {
+			UGameplayStatics::SpawnSoundAttached(SelfDestructSound, RootComponent);
+		}
 	}
 }
 

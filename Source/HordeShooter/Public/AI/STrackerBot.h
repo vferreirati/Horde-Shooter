@@ -69,6 +69,12 @@ protected:
 
 	FTimerHandle TimerHandle_SelfDamage;
 
+	FTimerHandle TimerHandle_CheckForBots;
+
+	UPROPERTY(BlueprintReadOnly, Category = "TrackerBot")
+	// Current power level of this bot. Increases with the amount of nearby bots
+	int32 CurrentPowerLevel;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -79,9 +85,13 @@ protected:
 	// Explode the bot dealing radial damage
 	void SelfDestruct();
 
-	UFUNCTION()
 	// Inflicts damage to self.
+	UFUNCTION()	
 	void DamageSelf();
+
+	// Gets the amount of nearby bots and calculates the power level
+	UFUNCTION()
+	void CalculatePowerLevel();
 
 	// Function subscribed to HealthComp OnHealthChanged
 	UFUNCTION()

@@ -22,7 +22,7 @@ public:
 	FOnHealthChangedSignature OnHealthChanged;
 
 protected:
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "HealthComponent")
+	UPROPERTY(ReplicatedUsing=OnRep_Health, BlueprintReadOnly, Category = "HealthComponent")
 	float Health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
@@ -32,6 +32,9 @@ protected:
 protected:	
 	// Called when the game starts
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnRep_Health(float OldHealth);
 
 	// Function used on subscription of Owner->OnTakeAnyDamage()
 	UFUNCTION()

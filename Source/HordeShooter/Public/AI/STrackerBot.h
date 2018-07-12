@@ -34,6 +34,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float RequiredDistanceToTarget;
 
+	UPROPERTY(EditDefaultsOnly, Category = "TracketBot")
+	class UParticleSystem* ExplosionEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	float ExplosionRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	float ExplosionDamage;
+
+	bool bExploded;
+
 	// Next point in navigation path
 	FVector NextPathPoint;
 
@@ -46,6 +57,9 @@ protected:
 
 	// Gets the next path point to player character
 	FVector GetNextPathPoint();
+
+	// Explode the bot dealing radial damage
+	void SelfDestruct();
 
 	// Function subscribed to HealthComp OnHealthChanged
 	UFUNCTION()

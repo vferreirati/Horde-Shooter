@@ -8,6 +8,7 @@
 #include "AI/Navigation/NavigationPath.h"
 #include "Gameframework/Character.h"
 #include "SHealthComponent.h"
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -27,6 +28,9 @@ ASTrackerBot::ASTrackerBot()
 	bUseVelocityChange = true;
 	MovementForce = 1000.f;
 	RequiredDistanceToTarget = 100.f;
+	bExploded = false;
+	ExplosionRadius = 200.f;
+	ExplosionDamage = 40.f;
 }
 
 // Called when the game starts or when spawned
@@ -53,10 +57,8 @@ void ASTrackerBot::Tick(float DeltaTime)
 		ForceDirection *= MovementForce;
 
 		MeshComp->AddForce(ForceDirection, NAME_None, bUseVelocityChange);
-		UE_LOG(LogTemp, Warning, TEXT("Force added"))
 	} else {
 		NextPathPoint = GetNextPathPoint();
-		UE_LOG(LogTemp, Warning, TEXT("Called next point"))
 	}
 }
 
@@ -81,7 +83,6 @@ void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Hea
 
 	// Explode when ded
 
-	// TODO: Pulse the material on hit
 	if (!MatInst) {
 		MatInst = MeshComp->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MeshComp->GetMaterial(0));
 	}
@@ -91,4 +92,29 @@ void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Hea
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName())
+
+	if (Health <= 0) {
+		SelfDestruct();
+	}
+}
+
+void ASTrackerBot::SelfDestruct() {
+
+	if (bExploded) {
+		return;
+	}
+
+	bExploded = true;
+
+	if (ExplosionEffect) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
+	}
+
+	TArray<AActor*> IgnoredActors;
+	IgnoredActors.Add(this);
+
+	// Apply radial damage
+	UGameplayStatics::ApplyRadialDamage(this, ExplosionDamage, GetActorLocation(), ExplosionRadius, nullptr, IgnoredActors, this, GetInstigatorController(), true);
+	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 12, FColor::Yellow, false, 5.f, 0, 2.f);
+	Destroy();
 }

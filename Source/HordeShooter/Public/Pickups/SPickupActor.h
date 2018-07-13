@@ -24,8 +24,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UDecalComponent* DecalComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "PickupActor")
+	TSubclassOf<class ASPowerupActor> PowerupClass;
+
+	// Amount of seconds that takes for a new powerup to respawn
+	UPROPERTY(EditDefaultsOnly, Category = "PickupActor")
+	float CooldownDuration;
+
+	class ASPowerupActor* PowerupInstance;
+
+	FTimerHandle TimerHandle_RespawnTimer;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	// Respawn the powerup of this pickup
+	void Respawn();
 };

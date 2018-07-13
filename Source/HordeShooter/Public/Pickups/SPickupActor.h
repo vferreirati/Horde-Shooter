@@ -28,7 +28,7 @@ protected:
 	TSubclassOf<class ASPowerupActor> PowerupClass;
 
 	// Amount of seconds that takes for a new powerup to respawn
-	UPROPERTY(EditDefaultsOnly, Category = "PickupActor")
+	UPROPERTY(EditInstanceOnly, Category = "PickupActor")
 	float CooldownDuration;
 
 	class ASPowerupActor* PowerupInstance;

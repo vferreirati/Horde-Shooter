@@ -40,10 +40,17 @@ protected:
 
 	FTimerHandle TimerHandle_PowerupTick;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	
+	// Keeps state of the power up
+	UPROPERTY(ReplicatedUsing=OnRep_PowerupActive)
+	bool bIsPowerupActive;
+
+protected:	
 	UFUNCTION()
 	void OnTickPowerup();
+
+	UFUNCTION()
+	void OnRep_PowerupActive();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
+	void OnPowerupStateChanged(bool bNewIsActive);
 };

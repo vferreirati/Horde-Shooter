@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "HordeShooterGameModeBase.generated.h"
+#include "SGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class HORDESHOOTER_API AHordeShooterGameModeBase : public AGameModeBase
+class HORDESHOOTER_API ASGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	

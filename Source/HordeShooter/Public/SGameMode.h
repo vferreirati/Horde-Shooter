@@ -17,10 +17,15 @@ class HORDESHOOTER_API ASGameMode : public AGameModeBase
 	ASGameMode();
 
 	virtual void StartPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 protected:
 	// Timer that deals with bot spawning logic
 	FTimerHandle TimerHandle_BotSpawner;
+
+	// Handles the time between waves
+	FTimerHandle TimerHandle_NextWaveStart;
 
 	// Bots to spawn in current wave.
 	int32 NumberOfBotsToSpawn;
@@ -50,4 +55,6 @@ protected:
 
 	// Sets timer for next wave 
 	void PrepareForNextWave();
+
+	void CheckWaveState();
 };

@@ -116,7 +116,6 @@ void ASTrackerBot::OnHealthChanged(USHealthComponent* HealthComponent, float Hea
 		MatInst->SetScalarParameterValue("LastTimeDamageTaken", GetWorld()->TimeSeconds);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName())
 }
 
 void ASTrackerBot::SelfDestruct() {

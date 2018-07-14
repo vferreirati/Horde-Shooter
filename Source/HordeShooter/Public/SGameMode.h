@@ -56,5 +56,14 @@ protected:
 	// Sets timer for next wave 
 	void PrepareForNextWave();
 
+	// Checks if there's any bot alive. 
+	// If all bots are dead AND BotsToSpawn == 0, ends the current wave
 	void CheckWaveState();
+
+	//Checks if there's any player alive
+	// If all players are dead, ends the game.
+	void CheckAnyPlayerAlive();
+
+	// Ends the game
+	void GameOver();
 };

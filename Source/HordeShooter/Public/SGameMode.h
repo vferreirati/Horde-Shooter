@@ -6,9 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "SGameMode.generated.h"
 
-/**
- * 
- */
+enum class EWaveState : uint8;
+
 UCLASS()
 class HORDESHOOTER_API ASGameMode : public AGameModeBase
 {
@@ -66,4 +65,6 @@ protected:
 
 	// Ends the game
 	void GameOver();
+
+	void SetWaveState(EWaveState NewState);
 };

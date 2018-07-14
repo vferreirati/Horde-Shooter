@@ -33,6 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 	float DefaultHealth;
 	
+	bool bIsDead;
 
 protected:	
 	// Called when the game starts

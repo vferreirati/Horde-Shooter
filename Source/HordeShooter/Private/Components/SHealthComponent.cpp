@@ -90,7 +90,7 @@ float USHealthComponent::GetHealth() const {
 
 bool USHealthComponent::IsFriendly(AActor* ActorA, AActor* ActorB) {
 
-	if (!ActorA || ActorB) {
+	if (!ActorA || !ActorB) {
 		return true;
 	}
 

@@ -71,6 +71,8 @@ protected:
 
 	FTimerHandle TimerHandle_CheckForBots;
 
+	FTimerHandle TimerHandle_RefreshPath;
+
 	UPROPERTY(BlueprintReadOnly, Category = "TrackerBot")
 	// Current power level of this bot. Increases with the amount of nearby bots
 	int32 CurrentPowerLevel;
@@ -92,6 +94,9 @@ protected:
 	// Gets the amount of nearby bots and calculates the power level
 	UFUNCTION()
 	void CalculatePowerLevel();
+
+	UFUNCTION()
+	void RefreshPath();
 
 	// Function subscribed to HealthComp OnHealthChanged
 	UFUNCTION()

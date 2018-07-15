@@ -100,7 +100,7 @@ void ASWeapon::Fire() {
 				DamageToApply *= CriticalMultiplier;
 			}
 
-			UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), DamageToApply, ShotDirection, OutHit, Owner->GetInstigatorController(), this, DamageType);
+			UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), DamageToApply, ShotDirection, OutHit, Owner->GetInstigatorController(), Owner, DamageType);
 
 			PlayImpactEffect(SurfaceType, OutHit.ImpactPoint);
 		}

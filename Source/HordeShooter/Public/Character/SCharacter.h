@@ -21,6 +21,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Weapon fire input function
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void StartFire();
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void StopFire();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UCameraComponent* CameraComp;
@@ -80,10 +87,6 @@ protected:
 	// Zoom input functions
 	void BeginZoom();
 	void EndZoom();
-
-	// Weapon fire input function
-	void StartFire();
-	void StopFire();
 
 	// Spawns the default weapon of the character.
 	// See DefaultWeapon.

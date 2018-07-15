@@ -30,6 +30,8 @@ ASWeapon::ASWeapon()
 
 	NetUpdateFrequency = 66.f;
 	MinNetUpdateFrequency = 33.f;
+
+	BulletSpread = 2.f;
 }
 
 void ASWeapon::BeginPlay() {
@@ -65,6 +67,11 @@ void ASWeapon::Fire() {
 		FHitResult OutHit;
 		FVector StartLocation = EyesLocation;
 		FVector ShotDirection = EyesRotation.Vector();
+		
+		float HalfRad = FMath::DegreesToRadians(BulletSpread);
+
+		ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+
 		FVector EndLocation = EyesLocation + (ShotDirection * WeaponRange);
 		
 		FCollisionQueryParams CollisionParams;

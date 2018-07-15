@@ -89,11 +89,15 @@ protected:
 	float RateOfFire;
 
 	// Helper variable to determine the amount of time between shots.
-	// 60 - ROF = FireDelay
+	// 60 / ROF = FireDelay
 	float FireDelay;
 
 	UPROPERTY(ReplicatedUsing = OnRep_HitScanTrace)
 	FHitScanTrace HitScanTrace;
+
+	// Bullet spread in degrees
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", Meta = (ClampMin = 0.f))
+	float BulletSpread;
 
 protected:
 
